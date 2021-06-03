@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run test_streamlit.py
+web: sh setup.sh && streamlit run st_rainfall.py
