@@ -24,9 +24,9 @@ area = cities['area'].values
 st.sidebar.markdown("## Select Data Intensity and Slope Angle")
 names = cities['Region'].values
 select_event = st.sidebar.selectbox(' Which city do you want to modify?', names)
-str_t0 = st.sidebar.slider('Rainfall Intensity(mm/hr)', 1, 100, 4)
+str_t0 = st.sidebar.slider('Rainfall Intensity(mm/hr)', 1, 15, 4)
 t0 = np.log(float(str_t0))
-slope_angle = st.sidebar.slider('Slope Angle(degrees)', 20, 35, 28)
+slope_angle = st.sidebar.slider('Slope Angle(degrees)', 20, 30, 28)
 #modify data using sidebar
 city_index = names.tolist().index(select_event)
 X_all[440+city_index, 0] = t0
@@ -83,3 +83,40 @@ st.altair_chart(c, use_container_width=True)
 # )
 
 # st.altair_chart(line_chart)
+
+def map(data, lat, long, zoom):
+    st.write(pdk.Deck(
+        map_style="mapbox://styles/mapbox/light-v9",
+        initial_view_state={
+            "latitude": lat,
+            "longitude": long,
+            "zoom": zoom,
+            "pitch": 50,
+        },
+        layers=[
+            pdk.Layer(
+                "HexagonLayer",
+                data=data,
+                get_position=["long", "lat"],
+                radius=10000,
+                elevation_scale=50,
+                elevation_range=[0, 3000],
+                pickable=True,
+                extruded=True,
+            ),
+        ]
+    ))
+#print(data_tuples)
+print(cities)
+temp_df = []
+count = 0
+for row in cities.itertuples(index = False):
+  num = int(data[count]/50)
+  temp_df.extend([list(row)]*num)
+  count += 1
+print(temp_df)
+df = pd.DataFrame(data = temp_df, columns = cities.columns)
+print(df)
+zoom_level = 6  
+midpoint = (np.average(lat), np.average(lon))
+map(df, midpoint[0], midpoint[1], zoom_level)
