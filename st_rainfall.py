@@ -26,7 +26,7 @@ names = cities['Region'].values
 select_event = st.sidebar.selectbox(' Which city do you want to modify?', names)
 str_t0 = st.sidebar.slider('Rainfall Intensity(mm/hr)', 1, 15, 4)
 t0 = np.log(float(str_t0))
-slope_angle = st.sidebar.slider('Slope Angle(degrees)', 20, 30, 28)
+slope_angle = st.sidebar.slider('Slope Angle(degrees)', 20, 28, 24)
 #modify data using sidebar
 city_index = names.tolist().index(select_event)
 X_all[440+city_index, 0] = t0
@@ -53,7 +53,7 @@ st.title('Rainfall-induced Landslide simulator')
 st.markdown("""
  * Landslides are frequently caused by rainfall. The two largest parameters affecting when they occur are rainfall intensity and slope angle.
  * Use the menu to the left to modify a cities rainfall intensity and slope angle which the city rests on.
- * Each cities failure time is shown below in the bar chart.
+ * Each cities failure time due to a landslide is shown below in the geographical and bar graph below.
 """)
 #col1, col2 = st.beta_columns(2)
 #col1.dataframe(failure)
@@ -69,9 +69,9 @@ data_tuples =   list(zip(names, data))
 df = pd.DataFrame(
   data_tuples,
  columns=['California cities', 'Failure Time in hours'])
-c = alt.Chart(df).mark_bar().encode(x='California cities', y='Failure Time in hours', size='Failure Time in hours', color='Failure Time in hours', tooltip=['California cities', 'Failure Time in hours'])
+c = alt.Chart(df).mark_bar().encode(x='California cities', y='Failure Time in hours', size='Failure Time in hours', color='Failure Time in hours', tooltip=['California cities', 'Failure Time in hours']).configure_axis(labelFontSize=15, titleFontSize=15)
 
-st.altair_chart(c, use_container_width=True)
+#st.altair_chart(c, use_container_width=True)
 
 # #print(failure)
 # line_chart = alt.Chart(data).mark_line(interpolate='basis').encode(
@@ -111,7 +111,7 @@ print(cities)
 temp_df = []
 count = 0
 for row in cities.itertuples(index = False):
-  num = int(data[count]/50)
+  num = int(data[count]/20)
   temp_df.extend([list(row)]*num)
   count += 1
 print(temp_df)
@@ -119,4 +119,6 @@ df = pd.DataFrame(data = temp_df, columns = cities.columns)
 print(df)
 zoom_level = 6  
 midpoint = (np.average(lat), np.average(lon))
+st.write("**Landslide Failure Time in California Cities**")
 map(df, midpoint[0], midpoint[1], zoom_level)
+st.altair_chart(c, use_container_width=True)
